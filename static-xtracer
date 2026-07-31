@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# [$] bash xtracer wannabe \
+
+SCRIPT="$1"
+SCRIPT_TYPE=$( file "$SCRIPT" | awk '{ print $2 }' )
+PATH_OF_THE_SCRIPT=$( head -n 1 "$SCRIPT" 2> /dev/null)
+# GREEN="\e[32m"
+# BLANK="\e[0m"
+KEYWORDS=(
+         "then"
+         "do"
+         "done"
+         "fi"
+         "elif"
+         "else"
+         "case"
+         "fi"
+         "for"
+         "until"
+         "case"
+         "function"
+         "esac"
+         "in"
+         "while"
+         "select"
+         "if"
+  )
+[[ -z "$SCRIPT" ]] && exit 0
+[[ ! -f "$SCRIPT" ]] && { printf "file not found.\n"; exit 1; }
+[[ "$SCRIPT_TYPE" == "Bourne-Again" ]] || { printf "Not a Bash script.\n"; exit 1; }
+regex=$(IFS='|'; printf "${KEYWORDS[*]}")
+
+printf "[$] xtrace output:\n"
+while IFS= read -r line; do
+    [[ -z "$line" ]] && continue
+OUTPUT=$(printf '%s\n' "$line" | sed -E "s/\<($regex)\>//g; s/[[:space:]]+/ /g; s/^ //; s/ $//" )
+    [[ -z "$OUTPUT" ]] && continue
+    [[ "$OUTPUT" =~ ^[[:space:]]*# ]] && continue
+    [[ "$OUTPUT" == "$PATH_OF_THE_SCRIPT" ]] && continue
+    printf '+ %s\n' "$OUTPUT"
+sleep 0.01
+done < "$SCRIPT"
