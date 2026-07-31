@@ -36,7 +36,7 @@ Output:
 - Does **not** execute the script.
 - Produces output similar to `bash -x`.
 - Ignores comments and blank lines.
-- Lightweight and written entirely in Bash.
+- Lightweight and written in Bash using `sed` and `awk`.
 
 ## Limitations
 
