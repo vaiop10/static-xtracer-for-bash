@@ -25,8 +25,18 @@ KEYWORDS=(
          "while"
          "select"
          "if"
-  )
-[[ -z "$SCRIPT" ]] && exit 0
+         ";;"
+ )
+[[ -z "$SCRIPT" ]] && {
+
+for file in ./*; do
+       [[ "$file" == "$0" ]] && continue
+       [[ -z "$file" ]] && exit 0
+        printf '%s\n' "[$] file found --> ${CURRENT_DIR} <$file>"
+       done
+       exit 0
+}
+
 [[ ! -f "$SCRIPT" ]] && { printf "file not found.\n"; exit 1; }
 [[ "$SCRIPT_TYPE" == "Bourne-Again" ]] || { printf "Not a Bash script.\n"; exit 1; }
 regex=$(IFS='|'; printf "${KEYWORDS[*]}")
